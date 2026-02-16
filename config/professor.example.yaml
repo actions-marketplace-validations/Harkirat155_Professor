@@ -1,0 +1,91 @@
+# Example Professor configuration file
+professor:
+  version: 1
+
+  # Review standards and thresholds
+  standards:
+    # Minimum severity to block PR approval
+    severity_threshold: medium
+    
+    # Auto-approve if all findings are below this level
+    auto_approve_threshold: low
+    
+    # Fail PR if critical or high severity count exceeds this
+    max_critical_issues: 0
+    max_high_issues: 3
+
+  # Analyzers to run (in order)
+  analyzers:
+    # LLM-based code review
+    - llm:
+        provider: anthropic  # or 'openai'
+        model: claude-3-5-sonnet-20240620
+        temperature: 0.1
+        focus_areas:
+          - bugs
+          - security
+          - performance
+          - maintainability
+
+    # Static analysis tools
+    - static:
+        - ruff
+        - mypy
+        - pylint
+
+    # Security scanning
+    - security:
+        - bandit
+        - safety
+        check_dependencies: true
+        check_secrets: true
+
+  # Review behavior rules
+  rules:
+    # Maximum files to review in one PR
+    max_file_changes: 50
+    
+    # Maximum file size to analyze (KB)
+    max_file_size_kb: 500
+    
+    # Maximum cyclomatic complexity
+    max_function_complexity: 15
+    
+    # Require tests for new code
+    require_tests: true
+    
+    # Require docstrings
+    require_docs: true
+    
+    # Minimum test coverage (%)
+    min_coverage: 80
+
+  # Files/patterns to ignore
+  ignore:
+    - "**/*.generated.py"
+    - "**/*.min.js"
+    - "**/migrations/**"
+    - "**/node_modules/**"
+    - "**/dist/**"
+    - "**/build/**"
+    - "**/__pycache__/**"
+    - "**/*.pyc"
+
+  # Language-specific settings
+  languages:
+    python:
+      version: "3.11"
+      style: "google"  # docstring style
+      
+    javascript:
+      style: "airbnb"
+      
+    typescript:
+      strict: true
+
+  # Output preferences
+  output:
+    format: markdown
+    include_suggestions: true
+    include_code_snippets: true
+    max_findings_per_file: 10
