@@ -35,6 +35,9 @@ class PRReviewer:
         llm_client: BaseLLMClient,
         max_files: int = 50,
         max_file_size_kb: int = 500,
+        enable_static_analysis: bool = True,
+        enable_security_scan: bool = True,
+        enable_complexity_check: bool = True,
     ) -> None:
         """Initialize PR reviewer.
 
@@ -43,17 +46,43 @@ class PRReviewer:
             llm_client: LLM client for analysis
             max_files: Maximum files to review
             max_file_size_kb: Maximum file size in KB
+            enable_static_analysis: Enable static analysis (ruff)
+            enable_security_scan: Enable security scanning
+            enable_complexity_check: Enable complexity checks
         """
         self.github = github_client
         self.llm = llm_client
         self.max_files = max_files
         self.max_file_size_kb = max_file_size_kb
-        self.analyzer = LLMAnalyzer(llm_client)
+
+        # Initialize analyzers
+        from professor.analyzers.llm_analyzer import LLMAnalyzer
+        from professor.analyzers.security_analyzer import SecurityAnalyzer
+        from professor.analyzers.complexity_analyzer import ComplexityAnalyzer
+        from professor.core import CompositeAnalyzer
+
+        analyzers = [LLMAnalyzer(llm_client)]
+
+        if enable_security_scan:
+            analyzers.append(SecurityAnalyzer())
+
+        if enable_complexity_check:
+            analyzers.append(ComplexityAnalyzer())
+
+        if enable_static_analysis:
+            try:
+                from professor.analyzers.ruff_analyzer import RuffAnalyzer
+                analyzers.append(RuffAnalyzer())
+            except Exception:
+                logger.warning("ruff_analyzer_disabled", reason="ruff not available")
+
+        self.analyzer = CompositeAnalyzer(analyzers)
 
         logger.info(
             "pr_reviewer_initialized",
             max_files=max_files,
             max_file_size_kb=max_file_size_kb,
+            analyzers=len(analyzers),
         )
 
     async def review_pull_request(
