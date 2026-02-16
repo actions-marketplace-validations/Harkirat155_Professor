@@ -1,10 +1,17 @@
 """SCM (Source Control Management) integration module."""
 
-# Placeholder for SCM integrations
-# Future implementations:
-# - GitHub adapter
-# - GitLab adapter
-# - Bitbucket adapter
-# - Azure DevOps adapter
+from professor.scm.github import (
+    GitHubClient,
+    PullRequest,
+    FileChange,
+    GitHubError,
+    GitHubRateLimitError,
+)
 
-__all__ = []
+__all__ = [
+    "GitHubClient",
+    "PullRequest",
+    "FileChange",
+    "GitHubError",
+    "GitHubRateLimitError",
+]

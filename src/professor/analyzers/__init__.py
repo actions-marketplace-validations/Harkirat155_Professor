@@ -1,10 +1,5 @@
 """Analyzers module initialization."""
 
-# Placeholder for analyzer implementations
-# Future analyzers will be added here:
-# - LLM-based analyzer
-# - Static analysis analyzer
-# - Security scanner
-# - Performance analyzer
+from professor.analyzers.llm_analyzer import LLMAnalyzer
 
-__all__ = []
+__all__ = ["LLMAnalyzer"]
