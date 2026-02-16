@@ -1,0 +1,21 @@
+# Professor Configuration
+professor:
+  version: 1
+  
+  standards:
+    severity_threshold: medium
+    auto_approve_threshold: low
+    
+  analyzers:
+    - llm:
+        provider: anthropic
+        model: claude-3-5-sonnet-20240620
+    - static:
+        - ruff
+        - mypy
+        
+  rules:
+    max_file_changes: 50
+    max_function_complexity: 15
+    require_tests: true
+    require_docs: true
