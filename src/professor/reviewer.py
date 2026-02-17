@@ -1,15 +1,19 @@
 """Pull Request reviewer orchestrator."""
 
-import asyncio
-from typing import Any, Optional
+from typing import Any
 from dataclasses import dataclass
 import structlog
 
-from professor.core import Review, ReviewStatus, Severity
-from professor.scm.github import GitHubClient, PullRequest, FileChange
-from professor.analyzers.llm_analyzer import LLMAnalyzer
+from professor.core import CompositeAnalyzer, Review, ReviewStatus
+from professor.core.language_router import LanguageAnalyzerRouter, LanguageCapabilities
 from professor.llm import BaseLLMClient
-from professor.config import get_settings
+
+try:
+    from professor.scm.github import GitHubClient, PullRequest, FileChange
+except ModuleNotFoundError:  # pragma: no cover - optional for unit tests without github deps
+    GitHubClient = Any
+    PullRequest = Any
+    FileChange = Any
 
 logger = structlog.get_logger()
 
@@ -24,6 +28,8 @@ class ReviewResult:
     blocking_issues: int
     total_findings: int
     cost: float
+    verdict: str
+    confidence: float
 
 
 class PRReviewer:
@@ -38,6 +44,8 @@ class PRReviewer:
         enable_static_analysis: bool = True,
         enable_security_scan: bool = True,
         enable_complexity_check: bool = True,
+        max_critical_issues: int = 0,
+        max_high_issues: int = 0,
     ) -> None:
         """Initialize PR reviewer.
 
@@ -54,35 +62,115 @@ class PRReviewer:
         self.llm = llm_client
         self.max_files = max_files
         self.max_file_size_kb = max_file_size_kb
+        self.max_critical_issues = max_critical_issues
+        self.max_high_issues = max_high_issues
 
-        # Initialize analyzers
+        # Initialize analyzers and language router
         from professor.analyzers.llm_analyzer import LLMAnalyzer
         from professor.analyzers.security_analyzer import SecurityAnalyzer
         from professor.analyzers.complexity_analyzer import ComplexityAnalyzer
-        from professor.core import CompositeAnalyzer
+        from professor.analyzers.language_tool_analyzers import (
+            CppStaticAnalyzer,
+            ESLintAnalyzer,
+            GoStaticAnalyzer,
+            JavaStaticAnalyzer,
+            RustStaticAnalyzer,
+        )
 
-        analyzers = [LLMAnalyzer(llm_client)]
-
+        self.router = LanguageAnalyzerRouter()
+        self.router.register_global(LLMAnalyzer(llm_client))
         if enable_security_scan:
-            analyzers.append(SecurityAnalyzer())
+            self.router.register_global(SecurityAnalyzer())
 
         if enable_complexity_check:
-            analyzers.append(ComplexityAnalyzer())
+            self.router.register_language("python", ComplexityAnalyzer())
 
         if enable_static_analysis:
+            self.router.register_language("javascript", ESLintAnalyzer())
+            self.router.register_language("typescript", ESLintAnalyzer())
+            self.router.register_language("java", JavaStaticAnalyzer())
+            self.router.register_language("go", GoStaticAnalyzer())
+            self.router.register_language("rust", RustStaticAnalyzer())
+            self.router.register_language("cpp", CppStaticAnalyzer())
             try:
                 from professor.analyzers.ruff_analyzer import RuffAnalyzer
-                analyzers.append(RuffAnalyzer())
+
+                self.router.register_language("python", RuffAnalyzer())
             except Exception:
                 logger.warning("ruff_analyzer_disabled", reason="ruff not available")
 
-        self.analyzer = CompositeAnalyzer(analyzers)
+        self.router.set_capabilities(
+            LanguageCapabilities(
+                language="python",
+                lint=True,
+                type_check=True,
+                security_scan=True,
+                complexity=True,
+                semantic=True,
+                tools=["ruff", "llm", "security", "complexity"],
+            )
+        )
+        self.router.set_capabilities(
+            LanguageCapabilities(
+                language="javascript",
+                lint=True,
+                security_scan=True,
+                semantic=True,
+                tools=["eslint", "llm", "security"],
+            )
+        )
+        self.router.set_capabilities(
+            LanguageCapabilities(
+                language="typescript",
+                lint=True,
+                type_check=True,
+                security_scan=True,
+                semantic=True,
+                tools=["eslint", "llm", "security"],
+            )
+        )
+        self.router.set_capabilities(
+            LanguageCapabilities(
+                language="java",
+                lint=True,
+                security_scan=True,
+                semantic=True,
+                tools=["spotbugs", "llm", "security"],
+            )
+        )
+        self.router.set_capabilities(
+            LanguageCapabilities(
+                language="go",
+                lint=True,
+                security_scan=True,
+                semantic=True,
+                tools=["go-vet", "llm", "security"],
+            )
+        )
+        self.router.set_capabilities(
+            LanguageCapabilities(
+                language="rust",
+                lint=True,
+                security_scan=True,
+                semantic=True,
+                tools=["clippy", "llm", "security"],
+            )
+        )
+        self.router.set_capabilities(
+            LanguageCapabilities(
+                language="cpp",
+                lint=True,
+                security_scan=True,
+                semantic=True,
+                tools=["clang-tidy", "llm", "security"],
+            )
+        )
 
         logger.info(
             "pr_reviewer_initialized",
             max_files=max_files,
             max_file_size_kb=max_file_size_kb,
-            analyzers=len(analyzers),
+            languages=self.router.list_languages(),
         )
 
     async def review_pull_request(
@@ -144,6 +232,7 @@ class PRReviewer:
             total_cost = 0.0
             for file_change in reviewable_files:
                 try:
+                    llm_cost_before = getattr(self.llm, "total_cost", 0.0)
                     findings = await self._analyze_file(
                         owner, repo, pr.head_branch, file_change
                     )
@@ -152,7 +241,8 @@ class PRReviewer:
                         review.add_finding(finding)
 
                     # Track cost
-                    total_cost += getattr(self.llm, "total_cost", 0.0)
+                    llm_cost_after = getattr(self.llm, "total_cost", 0.0)
+                    total_cost += max(0.0, llm_cost_after - llm_cost_before)
 
                     logger.info(
                         "file_analyzed",
@@ -175,11 +265,14 @@ class PRReviewer:
             result = ReviewResult(
                 review=review,
                 pr=pr,
-                approved=review.summary.is_approved,
+                approved=False,
                 blocking_issues=review.summary.blocking_issues,
                 total_findings=review.summary.total_findings,
                 cost=total_cost,
+                verdict="pending",
+                confidence=0.0,
             )
+            result.approved, result.verdict, result.confidence = self._evaluate_verdict(review)
 
             logger.info(
                 "pr_review_complete",
@@ -231,8 +324,10 @@ class PRReviewer:
             "status": file_change.status,
         }
 
-        # Run analyzer
-        findings = await self.analyzer.analyze(context)
+        analyzers = self.router.get_analyzers(context["language"], context)
+        if not analyzers:
+            return []
+        findings = await CompositeAnalyzer(analyzers).analyze(context)
         return findings
 
     def _filter_files(self, file_changes: list[FileChange]) -> list[FileChange]:
@@ -286,15 +381,13 @@ class PRReviewer:
             ".go": "go",
             ".rs": "rust",
             ".java": "java",
-            ".kt": "kotlin",
             ".cpp": "cpp",
-            ".c": "c",
-            ".h": "c",
-            ".rb": "ruby",
-            ".php": "php",
-            ".swift": "swift",
-            ".cs": "csharp",
-            ".scala": "scala",
+            ".cc": "cpp",
+            ".cxx": "cpp",
+            ".c": "cpp",
+            ".h": "cpp",
+            ".hh": "cpp",
+            ".hpp": "cpp",
         }
 
         for ext, lang in ext_map.items():
@@ -350,6 +443,24 @@ class PRReviewer:
         ]
 
         return any(pattern in filename for pattern in patterns)
+
+    def _evaluate_verdict(self, review: Review) -> tuple[bool, str, float]:
+        """Evaluate merge verdict and confidence using policy thresholds."""
+        critical = review.summary.critical
+        high = review.summary.high
+        medium = review.summary.medium
+        total = max(1, review.summary.total_findings)
+
+        blocked = critical > self.max_critical_issues or high > self.max_high_issues
+        verdict = "reject" if blocked else "approve"
+
+        # Confidence model (strict bias toward caution):
+        # more severe findings -> lower confidence, no severe findings -> high confidence.
+        weighted_risk = (critical * 1.0) + (high * 0.6) + (medium * 0.2)
+        normalized_risk = min(1.0, weighted_risk / total)
+        confidence = round(max(0.05, 1.0 - normalized_risk), 2)
+
+        return (not blocked, verdict, confidence)
 
 
 class ReviewError(Exception):

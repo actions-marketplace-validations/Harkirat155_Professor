@@ -1,5 +1,7 @@
 """Tests for analyzer base classes."""
 
+import asyncio
+import time
 import pytest
 from professor.core.analyzer import Analyzer, AnalyzerConfig, CompositeAnalyzer
 from professor.core.models import Finding, FindingCategory, Location, Severity
@@ -38,6 +40,28 @@ class AlwaysFailAnalyzer(Analyzer):
     def supports(self, context):
         """Never supports."""
         return False
+
+
+class SlowAnalyzer(Analyzer):
+    """Analyzer that simulates non-trivial async work."""
+
+    async def analyze(self, context):
+        await asyncio.sleep(0.1)
+        location = Location(file_path="test.py", line_start=1)
+        return [
+            Finding(
+                id="slow-1",
+                severity=Severity.INFO,
+                category=FindingCategory.PERFORMANCE,
+                title="Slow finding",
+                message="simulated",
+                location=location,
+                analyzer=self.name,
+            )
+        ]
+
+    def supports(self, context):
+        return True
 
 
 @pytest.mark.asyncio
@@ -92,3 +116,16 @@ async def test_composite_analyzer_mixed():
     # Should only get findings from supporting analyzer
     findings = await composite.analyze({"language": "python"})
     assert len(findings) == 1
+
+
+@pytest.mark.asyncio
+async def test_composite_analyzer_runs_in_parallel():
+    """Composite analyzer should run supported analyzers concurrently."""
+    composite = CompositeAnalyzer([SlowAnalyzer(), SlowAnalyzer()])
+
+    start = time.perf_counter()
+    findings = await composite.analyze({"language": "python"})
+    elapsed = time.perf_counter() - start
+
+    assert len(findings) == 2
+    assert elapsed < 0.18

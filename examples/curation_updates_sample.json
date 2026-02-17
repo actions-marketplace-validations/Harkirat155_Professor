@@ -1,0 +1,23 @@
+{
+  "updates": [
+    {
+      "case_id": "pyt-001",
+      "source_url": "https://github.com/example/repo/pull/101",
+      "notes": "ground truth confirmed",
+      "expected_finding": {
+        "signature": "src/db.py:42:sql-injection",
+        "severity": "critical",
+        "category": "security"
+      }
+    },
+    {
+      "case_id": "jav-001",
+      "source_url": "https://github.com/example/repo/pull/202",
+      "expected_finding": {
+        "signature": "src/Main.java:55:runtime-exec",
+        "severity": "high",
+        "category": "security"
+      }
+    }
+  ]
+}

@@ -15,6 +15,7 @@ from professor.core.analyzer import (
     AnalyzerError,
     CompositeAnalyzer,
 )
+from professor.core.language_router import LanguageAnalyzerRouter, LanguageCapabilities
 
 __all__ = [
     "Finding",
@@ -28,4 +29,6 @@ __all__ = [
     "AnalyzerConfig",
     "AnalyzerError",
     "CompositeAnalyzer",
+    "LanguageAnalyzerRouter",
+    "LanguageCapabilities",
 ]

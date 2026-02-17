@@ -72,6 +72,13 @@ tmp/
 temp/
 *.tmp
 
+# Example/generated benchmark artifacts
+examples/benchmark_report.*
+examples/benchmark_corpus_import_test.json
+examples/benchmark_corpus_working.json
+examples/curation_work_items_generated.json
+examples/curation_work_items_*.json
+
 # Secrets and credentials
 secrets/
 *.pem

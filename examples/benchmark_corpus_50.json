@@ -1,0 +1,468 @@
+{
+  "meta": {
+    "description": "Professor benchmark corpus template",
+    "total_cases": 50,
+    "language_targets": {
+      "python": 10,
+      "javascript": 8,
+      "typescript": 8,
+      "java": 8,
+      "go": 8,
+      "rust": 4,
+      "cpp": 4
+    },
+    "curation_guide": "Fill expected_findings with validated ground truth findings."
+  },
+  "cases": [
+    {
+      "case_id": "pyt-001",
+      "language": "python",
+      "repo_family": "backend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "pyt-002",
+      "language": "python",
+      "repo_family": "frontend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "pyt-003",
+      "language": "python",
+      "repo_family": "infra",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "pyt-004",
+      "language": "python",
+      "repo_family": "systems",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "pyt-005",
+      "language": "python",
+      "repo_family": "data",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "pyt-006",
+      "language": "python",
+      "repo_family": "backend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "pyt-007",
+      "language": "python",
+      "repo_family": "frontend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "pyt-008",
+      "language": "python",
+      "repo_family": "infra",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "pyt-009",
+      "language": "python",
+      "repo_family": "systems",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "pyt-010",
+      "language": "python",
+      "repo_family": "data",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-001",
+      "language": "javascript",
+      "repo_family": "backend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-002",
+      "language": "javascript",
+      "repo_family": "frontend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-003",
+      "language": "javascript",
+      "repo_family": "infra",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-004",
+      "language": "javascript",
+      "repo_family": "systems",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-005",
+      "language": "javascript",
+      "repo_family": "data",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-006",
+      "language": "javascript",
+      "repo_family": "backend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-007",
+      "language": "javascript",
+      "repo_family": "frontend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-008",
+      "language": "javascript",
+      "repo_family": "infra",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "typ-001",
+      "language": "typescript",
+      "repo_family": "systems",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "typ-002",
+      "language": "typescript",
+      "repo_family": "data",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "typ-003",
+      "language": "typescript",
+      "repo_family": "backend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "typ-004",
+      "language": "typescript",
+      "repo_family": "frontend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "typ-005",
+      "language": "typescript",
+      "repo_family": "infra",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "typ-006",
+      "language": "typescript",
+      "repo_family": "systems",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "typ-007",
+      "language": "typescript",
+      "repo_family": "data",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "typ-008",
+      "language": "typescript",
+      "repo_family": "backend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-001",
+      "language": "java",
+      "repo_family": "frontend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-002",
+      "language": "java",
+      "repo_family": "infra",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-003",
+      "language": "java",
+      "repo_family": "systems",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-004",
+      "language": "java",
+      "repo_family": "data",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-005",
+      "language": "java",
+      "repo_family": "backend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-006",
+      "language": "java",
+      "repo_family": "frontend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-007",
+      "language": "java",
+      "repo_family": "infra",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "jav-008",
+      "language": "java",
+      "repo_family": "systems",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "go-001",
+      "language": "go",
+      "repo_family": "data",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "go-002",
+      "language": "go",
+      "repo_family": "backend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "go-003",
+      "language": "go",
+      "repo_family": "frontend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "go-004",
+      "language": "go",
+      "repo_family": "infra",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "go-005",
+      "language": "go",
+      "repo_family": "systems",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "go-006",
+      "language": "go",
+      "repo_family": "data",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "go-007",
+      "language": "go",
+      "repo_family": "backend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "go-008",
+      "language": "go",
+      "repo_family": "frontend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "rus-001",
+      "language": "rust",
+      "repo_family": "infra",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "rus-002",
+      "language": "rust",
+      "repo_family": "systems",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "rus-003",
+      "language": "rust",
+      "repo_family": "data",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "rus-004",
+      "language": "rust",
+      "repo_family": "backend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "cpp-001",
+      "language": "cpp",
+      "repo_family": "frontend",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "cpp-002",
+      "language": "cpp",
+      "repo_family": "infra",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "cpp-003",
+      "language": "cpp",
+      "repo_family": "systems",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    },
+    {
+      "case_id": "cpp-004",
+      "language": "cpp",
+      "repo_family": "data",
+      "source_url": "",
+      "notes": "",
+      "expected_findings": [],
+      "predicted_findings": []
+    }
+  ]
+}

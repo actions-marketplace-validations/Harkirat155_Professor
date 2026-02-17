@@ -1,0 +1,36 @@
+{
+  "cases": [
+    {
+      "case_id": "py-001",
+      "language": "python",
+      "repo_family": "backend",
+      "expected_findings": [
+        {
+          "signature": "src/db.py:42:sql-injection",
+          "severity": "critical",
+          "category": "security"
+        }
+      ],
+      "predicted_findings": [
+        {
+          "signature": "src/db.py:42:sql-injection",
+          "severity": "critical",
+          "category": "security"
+        }
+      ]
+    },
+    {
+      "case_id": "ts-001",
+      "language": "typescript",
+      "repo_family": "frontend",
+      "expected_findings": [
+        {
+          "signature": "src/app.ts:88:eval",
+          "severity": "high",
+          "category": "security"
+        }
+      ],
+      "predicted_findings": []
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 """Base analyzer interface and abstract classes."""
 
+import asyncio
 from abc import ABC, abstractmethod
 from typing import Any, Optional
 from professor.core.models import Finding, Review
@@ -86,13 +87,17 @@ class CompositeAnalyzer(Analyzer):
         Returns:
             Aggregated list of findings from all analyzers
         """
+        applicable = [analyzer for analyzer in self.analyzers if analyzer.supports(context)]
+        if not applicable:
+            return []
+
+        results = await asyncio.gather(
+            *(analyzer.analyze(context) for analyzer in applicable)
+        )
+
         all_findings: list[Finding] = []
-
-        for analyzer in self.analyzers:
-            if analyzer.supports(context):
-                findings = await analyzer.analyze(context)
-                all_findings.extend(findings)
-
+        for findings in results:
+            all_findings.extend(findings)
         return all_findings
 
     def supports(self, context: dict[str, Any]) -> bool:
